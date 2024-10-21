@@ -2,8 +2,8 @@ import { BrowserRouter, Route, Routes } from "react-router-dom"
 
 import ProtectedRoute from './ProtectedRoute'
 
-import Login from './pages/login/LoginContainer'
-import Plans from './pages/Plans'
+import Login from './pages/login/Main'
+import Plans from './pages/plans/Main'
 import Summary from './pages/Summary'
 import NotFound from './pages/NotFound'
 

@@ -1,11 +1,12 @@
-import React, { useState } from "react"
+import { useState, forwardRef } from "react"
 
-const Popup = ({ show, onClose, children }) => {
+const Modal = forwardRef(({ show, onClose, children }, ref) => {
     const [isVisible, setIsVisible] = useState(show)
+
     if (!isVisible) return null
 
     return (
-        <div className="popup">
+        <div ref={ref} className="popup">
             <div className="popup-overlay" onClick={onClose}></div>
 
             <div className="pmhipaijcd">
@@ -17,9 +18,9 @@ const Popup = ({ show, onClose, children }) => {
             </div>
         </div>
     )
-}
+})
 
-Popup.Header = ({ children, onClose, closeButton }) => (
+Modal.Header = ({ children, onClose, closeButton }) => (
     <header className="popup-close gap-3 justify-between">
         {closeButton ? (
             <>
@@ -39,8 +40,8 @@ Popup.Header = ({ children, onClose, closeButton }) => (
     </header>
 )
 
-Popup.Title = ({ children }) => (<h1 className="font-br-sonoma-bold text-base text-[var(--gray1)] overflow-hidden text-ellipsis whitespace-nowrap absolute bottom-1/2 right-1/2 translate-x-1/2 translate-y-1/2">{children}</h1>)
+Modal.Title = ({ children }) => (<h1 className="font-br-sonoma-bold text-base text-[var(--gray1)] overflow-hidden text-ellipsis whitespace-nowrap absolute bottom-1/2 right-1/2 translate-x-1/2 translate-y-1/2">{children}</h1>)
 
-Popup.Body = ({ children }) => (<section className="popup-description">{children}</section>)
+Modal.Body = ({ children }) => (<section className="popup-description">{children}</section>)
 
-export { Popup }
+export { Modal }

@@ -1,10 +1,11 @@
 import { useEffect, createContext, useContext, useState } from "react"
-import { loginRequest } from "../api/auth"
+import UserService from "../core/user/infrastructure/http/UserService"
 
 // import jwtDecode from "jwt-decode"
 // import { decode } from "jsonwebtoken"
 import Cookies from "js-cookie"
 
+const userService = new UserService()
 const AuthContext = createContext()
 
 export const useAuth = () => {
@@ -30,7 +31,7 @@ export const AuthProvider = ({ children }) => {
             }
 
             try {
-                const res = await loginRequest()
+                const res = await userService.login()
                 
                 if (!res.data) {
                     setIsAuthenticated(false)
@@ -58,7 +59,7 @@ export const AuthProvider = ({ children }) => {
 
     const signin = async (user) => {
          try {
-            const res = await loginRequest(user)
+            const res = await userService.login(user)
 
             if (res && user.documentType === res.data.documentType && user.documentNumber === res.data.documentNumber && user.phoneNumber === res.data.phoneNumber) {
                 setError(null)
@@ -73,7 +74,7 @@ export const AuthProvider = ({ children }) => {
         }
     }
 
-    const logout = () => {
+    const logout = async () => {
         setUser(null)
         setIsAuthenticated(false)
         Cookies.remove("token")

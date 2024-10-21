@@ -7,7 +7,7 @@ export const errorMessage = {
     acceptCommercialCommunications: 'Por favor, acepta la Política de Comunicaciones Comerciales.',
 }
 
-const useFormValidation = (formData) => {
+export default function validationUtils(formData) {
     const [formErrors, setFormErrors] = useState({
         document: '',
         phoneNumber: '',
@@ -15,7 +15,7 @@ const useFormValidation = (formData) => {
         acceptCommercialCommunications: '',
     })
 
-    const validateForm = () => {
+    const validationFunction = () => {
         let hasError = false
         const newErrors = {}
 
@@ -43,7 +43,5 @@ const useFormValidation = (formData) => {
         return !hasError
     }
 
-    return { formErrors, setFormErrors, validateForm }
+    return { formErrors, setFormErrors, validationFunction }
 }
-
-export default useFormValidation

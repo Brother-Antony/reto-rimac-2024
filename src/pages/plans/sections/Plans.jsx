@@ -1,15 +1,16 @@
-import React, { useEffect, useState } from 'react'
-import { Link, useNavigate } from 'react-router-dom'
+import { useEffect, useState } from 'react'
+import { useNavigate } from 'react-router-dom'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faChevronLeft } from '@fortawesome/free-solid-svg-icons'
 
 import Cookies from "js-cookie"
 
-import { plansRequest } from '../api/auth'
-import { useAuth } from '../context/AuthContext'
-import { calculateAge } from "../hooks/useCalculateAge"
+import { useAuth } from '../../../context/AuthContext'
+import { calculateAge } from "../../../hooks/useCalculateAge"
 
-import Header from "../components/Header"
+import Header from "../../../layouts/Header"
+import PlansService from '../../../core/plans/infrastructure/http/PlansService'
+import PlansPrice from '../components/plansPrice'
 
 const imageMappings = {
   "Plan en Casa": "./IcHomeLight.svg",
@@ -19,24 +20,29 @@ const imageMappings = {
   "Plan en Casa + Fitness": "./IcHomeLight.svg",
 }
 
-const Plans = () => {
+const plansService = new PlansService()
+
+export default function Plans() {
   let navigate = useNavigate()
 
   const { user, logout } = useAuth()
 
   const [selectedOption, setSelectedOption] = useState('')
   const [plans, setPlans] = useState([])
+  const [loadingId, setLoadingId] = useState(null)
+  const [loading, setLoading] = useState(false)
   const [showPlans, setShowPlans] = useState(false)
   const [priceParaMi, setPriceParaMi] = useState({})
-
+  
   useEffect(() => {
     document.body.style.overflow = ''
     const choosePlan = async () => {
+      setLoading(true)
       try {
-        const res = await plansRequest()
+        const res = await plansService.getPlans()
         const precioOriginalParaMi = {}
         const userAge = calculateAge(user.birthDay)
-        const filteredPlans = res.data.list.filter((plan) => plan.age >= userAge)
+        const filteredPlans = res.list.filter((plan) => plan.age >= userAge)
 
         filteredPlans.forEach((plan) => {
           precioOriginalParaMi[plan.name] = plan.price
@@ -50,6 +56,10 @@ const Plans = () => {
         setShowPlans(true)
       } catch (error) {
         console.error('Error fetching plans:', error)
+      } finally {
+        setTimeout(() => {
+          setLoading(false)
+        }, 2000)
       }
     }
 
@@ -58,10 +68,14 @@ const Plans = () => {
     }
   }, [selectedOption, user])
 
-  const handleSummary = (selectedPlan) => {
-    Cookies.set('plansNombre', selectedPlan.name)
-    Cookies.set('plansPrice', selectedPlan.price)
-    navigate('/summary')
+  const handleSummary = (selectedPlan, index) => {
+    setLoadingId(index)
+    setTimeout(() => {
+      Cookies.set('plansNombre', selectedPlan.name)
+      Cookies.set('plansPrice', selectedPlan.price)
+      navigate('/summary')
+      setLoadingId(null)
+    }, 2000)
   }
 
   return (
@@ -147,38 +161,16 @@ const Plans = () => {
               </div>
             </div>
 
-            {showPlans && (
-              <div className='planPrice'>
-                {plans.map((plan, index) => (
-                  <div key={index} className='w-[288px] pt-[68px] pb-[51px] px-[32px] shadow-[0_1px_24px_0_rgba(174,172,243,.251)] rounded-[24px] flex flex-col relative'>
-                    {["Plan en Casa y Clínica"].includes(plan.name) && (
-                      <div className='recommended absolute top-10 text-xs text-[var(--neutrals7)] bg-[var(--aqual4)] py-0.5 px-2 rounded-md font-black tracking-[.4px]'>Plan recomendado</div>
-                    )}
-                    <div className='flex items-start justify-between'>
-                      <div>
-                        <div className='text-2xl font-black tracking-[-.2px] text-[var(--neutrals7)]'>{plan.name}</div>
-                        <div className="mt-[24px] uppercase text-xs text-[var(--neutrals6)] tracking-[.6px] font-black">Costo del plan</div>
-                        {selectedOption === 'para-alguien-mas' ? (
-                          <div className='text-sm text-[var(--neutrals6)] tracking-[-.2px] mt-1 line-through'>{`$${priceParaMi[plan.name]} antes`}</div>
-                        ) : null}
-                        <div className="mt-1 text-xl font-black tracking-[-.2px] text-[var(--neutrals7)]">{`$${plan.price} al mes`}</div>
-                      </div>
-
-                      <img src={imageMappings[plan.name]} alt={plan.name} />
-                    </div>
-
-                    <div className="w-full h-[1px] bg-[var(--neutrals4)] my-[24px]"></div>
-
-                    <ul className='mb-[40px] flex flex-col gap-[24px]'>
-                      {plan.description.map((desc, index) => (
-                        <li key={index} className='list-disc ml-[18px] text-[16px] leading-7 tracking-[.1px] text-[var(--neutrals7)]'>{desc}</li>
-                      ))}
-                    </ul>
-
-                    <button type='button' onClick={() => handleSummary(plan)} className='btn mt-auto red mini font-bold w-full'>Seleccionar Plan</button>
-                  </div>
+            {showPlans && loading ? (
+              <div className="animate-pulse planPrice">
+                {plans.map((_, index) => (
+                  <div key={index} className="w-[288px] pt-[68px] pb-[51px] px-[32px] shadow-[0_1px_24px_0_rgba(174,172,243,.251)] rounded-[24px] bg-[var(--neutrals4)] h-[200px] opacity-30"></div>
                 ))}
               </div>
+            ) : (
+              showPlans && (
+                <PlansPrice plans={plans} selectedOption={selectedOption} loadingId={loadingId} loading={loading} priceParaMi={priceParaMi} imageMappings={imageMappings} handleSummary={handleSummary} />
+              )
             )}
           </div>
         </div>
@@ -186,5 +178,3 @@ const Plans = () => {
     </>
   )
 }
-
-export default Plans

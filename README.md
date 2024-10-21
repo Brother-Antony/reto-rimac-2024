@@ -95,11 +95,11 @@ La implementación del SEO es una parte crucial de garantizar que la aplicación
 
 1. Clona este repositorio en tu máquina local utilizando el siguiente comando:
 
-git clone https://github.com/Brother-Antony/reto-rimac-2023.git
+git clone https://github.com/Brother-Antony/reto-rimac-2024.git
 
 2. Entra en el directorio del proyecto:
 
-cd reto-rimac-2023
+cd reto-rimac-2024
 
 3. Instala las dependencias necesarias:
 
