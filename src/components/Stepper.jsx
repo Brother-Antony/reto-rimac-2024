@@ -29,7 +29,10 @@ export default function Stepper({ currentStep, onBackClick }) {
                     <div className="flex items-center ml-[16px] w-full">
                         <div className="text-[10px] tracking-[.8px] leading-4 mr-[16px] font-black whitespace-nowrap">PASO {currentStep} DE 2</div>
                         <div className="w-full h-[6px] rounded-[20px] bg-[var(--neutrals4)]">
-                            <div className={`bg-[var(--blueberry600)] h-[6px] transition-all duration-500 w-[${currentStep === 1 ? '50%' : '100%'}] rounded-[20px]`}></div>
+                            <div
+                                className="bg-[var(--blueberry600)] h-[6px] transition-all duration-500 rounded-[20px]"
+                                style={{ width: currentStep === 1 ? '50%' : '100%' }}
+                            ></div>
                         </div>
                     </div>
                 </div>
