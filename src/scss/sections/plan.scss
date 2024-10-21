@@ -113,4 +113,13 @@
             }
         }
     }
+
+    @include u.responsive(768px) {
+        .planPrice {
+            flex-wrap: nowrap;
+            overflow: auto;
+            padding: 24px 30px 40px 26px;
+            margin: 16px -24px;
+        }
+    }
 }

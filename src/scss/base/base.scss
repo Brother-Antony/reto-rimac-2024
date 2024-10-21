@@ -51,14 +51,14 @@ body {
     position: relative;
     display: flex;
     flex-direction: column;
-    overflow-x: hidden;
+    // overflow-x: hidden;
     min-height: 100vh;
 
     #root {
         position: inherit;
         display: inherit;
         flex-direction: inherit;
-        overflow-x: inherit;
+        // overflow-x: inherit;
         min-height: inherit;
     }
 }

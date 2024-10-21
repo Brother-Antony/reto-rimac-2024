@@ -1,6 +1,7 @@
 import { BrowserRouter, Route, Routes } from "react-router-dom"
 
 import ProtectedRoute from './ProtectedRoute'
+import MainLayout from "./layouts/MainLayout"
 
 import Login from './pages/login/Main'
 import Plans from './pages/plans/Main'
@@ -14,8 +15,10 @@ export default function App() {
         <Route path="/" element={<Login />} />
         
         <Route element={<ProtectedRoute />}>
-          <Route path="/plans" element={<Plans />} />
-          <Route path="/summary" element={<Summary />} />
+          <Route element={<MainLayout />}>
+            <Route path="/plans" element={<Plans />} />
+            <Route path="/summary" element={<Summary />} />
+          </Route>
         </Route>
 
         <Route path="*" element={<NotFound />} />
